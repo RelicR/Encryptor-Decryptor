@@ -1,48 +1,44 @@
 import random
+abc_en = [chr(ord('a') + i//2) if i % 2 == 0 else chr(ord('A') + i//2) for i in range(52)]
+abc_ru = [chr(ord('а') + i//2) if i % 2 == 0 else chr(ord('А') + i//2) for i in range(64)]
+abc_dig = [i for i in range(10)]
 while 1:
-    lang = input("Задайте язык текста\nen/ru\n")
-    while (lang != "en") * (lang != "ru") == 1:
-        lang = input("Введено неверное значение\nЗадайте язык текста\nen/ru\n")
-    mode = input("Выберите алгоритм работы программы\nВведите `enc` для запуска алгоритма шифрования\nВведите `dec` для запуска алгоритма дешифровки\n")
-    while (mode != "enc") * (mode != "dec") == 1:
-        mode = input("Введено неверное значение\nВыберите алгоритм работы программы\nenc/dec\n")
+    mode = input("Введите 'enc' для запуска алгоритма шифрования\nВведите 'dec' для запуска алгоритма дешифровки\nВыберите алгоритм работы программы enc/dec\n")
+    while mode != "enc" and mode != "dec":
+        mode = input("Задан некорректный алгоритм работы программы\nВыберите алгоритм работы программы enc/dec\n")
+    text = input("Введите текст (буквы 'Ё' и 'ё' будут заменены на 'Е' и 'е')\n").replace('Ё', 'Е').replace('ё', 'е')
     if mode == "enc":
-        enc_text = ""
-        if lang == "en":
-            key = random.randint(-25, 25)
-            text = list(map(str, input("Введите текст на английском языке:\n")))
-            temp_text = [chr(abs(ord(i) - 65 + key) % 26 + 65) if not i.islower() and i.isalpha() else i for i in text]
-            temp2_text = [chr(abs(ord(i) - 97 + key) % 26 + 97) if i.islower() and i.isalpha() else i for i in temp_text]
-            for i in range(len(text)):
-                enc_text += temp2_text[i]
-            print(enc_text, "\nkey = ", key)
-        else:
-            key = random.randint(-32, 32)
-            text = input("Введите текст на русском языке (не используйте буквы Ё/ё):\n")
-            temp_text = [chr((ord(i) - 1040 + key) % 32 + 1040) if not i.islower() and i.isalpha() else i for i in text]
-            temp2_text = [chr((ord(i) - 1072 + key) % 32 + 1072) if i.islower() and i.isalpha() else i for i in temp_text]
-            for i in range(len(text)):
-                enc_text += temp2_text[i]
-            print(enc_text, "\nkey =", key)
+        enc_text = ''
+        key = input("Задайте ключ шифрования\nЕсли ключ шифрования не задан, будет сгенерирован случайный ключ\n")
+        if not key:
+            key = random.randint(-10000, 10000)
+        for i in text:
+            if i.isalpha() or i.isdigit():
+                if i in abc_en:
+                    enc_text += abc_en[((abc_en.index(i)//2 + abc_en.index(i) % 2 + int(key)) * 2 - abc_en.index(i) % 2) % len(abc_en)]
+                elif i in abc_ru:
+                    enc_text += abc_ru[((abc_ru.index(i)//2 + abc_ru.index(i) % 2 + int(key)) * 2 - abc_ru.index(i) % 2) % len(abc_ru)]
+                else:
+                    enc_text += str(abc_dig[(abc_dig.index(int(i)) + int(key)) % len(abc_dig)])
+            else:
+                enc_text += i
+        print(enc_text, "\nkey =", key)
+
     else:
-        dec_text = ""
-        if lang == "en":
-            key = int(input("Введите ключ дешифровки\n"))
-            text = list(map(str, input("Введите текст на английском языке:\n")))
-            temp_text = [chr((ord(i) - 65 + (26 - key) % 26) % 26 + 65) if not i.islower() and i.isalpha() else i for i in text]
-            temp2_text = [chr((ord(i) - 97 + (26 - key) % 26) % 26 + 97) if i.islower() and i.isalpha() else i for i in temp_text]
-            for i in range(len(text)):
-                dec_text += temp2_text[i]
-            print(dec_text)
-        else:
-            key = int(input("Введите ключ дешифровки\n"))
-            text = input("Введите текст на русском языке:\n")
-            temp_text = [chr((ord(i) - 1040 - key) % 32 + 1040) if not i.islower() and i.isalpha() else i for i in text]
-            temp2_text = [chr((ord(i) - 1072 - key) % 32 + 1072) if i.islower() and i.isalpha() else i for i in temp_text]
-            for i in range(len(text)):
-                dec_text += temp2_text[i]
-            print(dec_text)
-    if input("\nЖелаете продолжить работу с программой?\nВведите 'y', чтобы продолжить. Введите любой другой символ для закрытия программы\n") == "y":
+        dec_text = ''
+        key = input("Задайте ключ шифрования\n")
+        for i in text:
+            if i.isalpha() or i.isdigit():
+                if i in abc_en:
+                    dec_text += abc_en[((abc_en.index(i)//2 + abc_en.index(i) % 2 - int(key)) * 2 - abc_en.index(i) % 2) % len(abc_en)]
+                elif i in abc_ru:
+                    dec_text += abc_ru[((abc_ru.index(i)//2 + abc_ru.index(i) % 2 - int(key)) * 2 - abc_ru.index(i) % 2) % len(abc_ru)]
+                else:
+                    dec_text += str(abc_dig[(abc_dig.index(int(i)) - int(key)) % len(abc_dig)])
+            else:
+                dec_text += i
+        print(dec_text)
+    if input("Желаете продолжить работу с программой?\nВведите 'y', чтобы продолжить; любой другой символ для закрытия программы\n") == "y":
         print("\n"*10)
     else:
         break
