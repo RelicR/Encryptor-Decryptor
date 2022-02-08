@@ -22,7 +22,7 @@ while 1:
                     enc_text += str(abc_dig[(abc_dig.index(int(i)) + int(key)) % len(abc_dig)])
             else:
                 enc_text += i
-        print(enc_text, "\nkey =", key)
+        print(enc_text, f"\nkey = {key}")
 
     else:
         dec_text = ''
